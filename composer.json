@@ -1,0 +1,22 @@
+{
+    "name": "vibe/anax-lite",
+    "description": "A small PHP framework.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Viktor Bengtsson",
+            "email": "zero2k@github.com"
+        }
+    ],
+    "require": {
+        "anax/request": "^1.0",
+        "anax/url": "^1.0",
+        "anax/router": "^1.0",
+        "anax/response": "^1.0",
+        "anax/view": "^1.0",
+        "mos/cimage": "^0.7.19"
+    },
+    "autoload": {
+        "psr-4": {"Vibe\\": "src/"}
+    }
+}
