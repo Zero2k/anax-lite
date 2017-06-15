@@ -1,6 +1,6 @@
 <div id="content" class="home-info">
     <div class="container">
-        <h1>Anax Lite is a lightweight PHP framework, perfect for when you want to build small websites such as blogs, forums or personal site. Anax Lite also offers a couple of different modules with pre built functionality such as Image Resizing, Cache...</h1>
+        <h1>Anax Lite is a lightweight PHP framework, perfect for when you want to build small websites such as blogs, forums or a personal site. Anax Lite also offers a couple of different modules with pre built functionality such as Image Resizing, Cache...</h1>
         <p class="lead">Use this website to learn more about Anax Lite<br> or click the link below to explore the source code at GitHub.</p>
         <a class="btn btn-default btn-lg" href="https://github.com/Zero2k/anax-lite" role="button">View the GitHub project</a>
     </div>

@@ -18,7 +18,7 @@ $urlComponents = $app->url->create("components");
               <img style="max-height: 30px;" src="img/anax-lite.svg">
           </a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="<?= $urlHome ?>">Home</a></li>
             <li><a href="<?= $urlAbout ?>">About</a></li>
