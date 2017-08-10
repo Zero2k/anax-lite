@@ -21,6 +21,8 @@ $app->router  = new \Anax\Route\RouterInjectable();
 $app->view    = new \Anax\View\ViewContainer();
 $app->session  = new \Vibe\Session\Session();
 $app->navbar = new \Vibe\Navbar\Navbar();
+$app->diceSession = new \Vibe\Session\Session("diceGame");
+$app->diceSession->start();
 
 $app->navbar->configure("navbar.php");
 $app->navbar->setApp($app);

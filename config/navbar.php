@@ -20,5 +20,9 @@ return [
     "session" => [
         "text" => "Session",
         "route" => "session",
+    ],
+    "dice" => [
+        "text" => "Dice Game",
+        "route" => "dice",
     ]
 ];

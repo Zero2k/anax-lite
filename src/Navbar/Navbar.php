@@ -19,6 +19,7 @@ class Navbar implements
         foreach ($navbarData as $key => $value) {
             global $menu;
             foreach ($value as $key => $value) {
+                $active = $this->app->request->getRoute() == $value ? "active" : "";
                 if ($key == "text") {
                     $text = $value;
                 } elseif ($key == "route") {
@@ -26,7 +27,7 @@ class Navbar implements
                 }
             }
 
-            $menu .= "<li><a href=$url>$text</a></li>";
+            $menu .= "<li class=$active><a href=$url>$text</a></li>";
         } 
 
         return $menu;

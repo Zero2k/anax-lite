@@ -14,7 +14,7 @@ $app->router->add("", function () use ($app) {
 
 $app->router->add("about", function () use ($app) {
     $app->view->add("take1/header", ["title" => "About"]);
-    $app->view->add("navbar1/navbar");
+    $app->view->add("navbar2/navbar");
     $app->view->add("take1/intro", ["title" => "About", "intro" => "About this site and and its underlying technology."]);
     $app->view->add("take1/about");
     $app->view->add("take1/footer");
@@ -24,7 +24,7 @@ $app->router->add("about", function () use ($app) {
 
 $app->router->add("report", function () use ($app) {
     $app->view->add("take1/header", ["title" => "Report"]);
-    $app->view->add("navbar1/navbar");
+    $app->view->add("navbar2/navbar");
     $app->view->add("take1/intro", ["title" => "Report", "intro" => "Reports for this course and its mandatory assignments."]);
     $app->view->add("take1/report");
     $app->view->add("take1/footer");
@@ -34,7 +34,7 @@ $app->router->add("report", function () use ($app) {
 
 $app->router->add("components", function () use ($app) {
     $app->view->add("take1/header", ["title" => "Components"]);
-    $app->view->add("navbar1/navbar");
+    $app->view->add("navbar2/navbar");
     $app->view->add("take1/intro", ["title" => "Components", "intro" => "This page is used to try new functionality that's being added to the framework."]);
     $app->view->add("take1/components");
     $app->view->add("take1/footer");

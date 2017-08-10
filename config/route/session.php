@@ -7,7 +7,7 @@ $app->router->add("session", function () use ($app) {
     }
 
     $app->view->add("take1/header", ["title" => "Session"]);
-    $app->view->add("navbar1/navbar");
+    $app->view->add("navbar2/navbar");
         $app->view->add("take1/intro", ["title" => "Session", "intro" => "Implementation of session in Anax-lite. Increase and decrease the value by clicking the buttons below."]);
     $app->view->add("session/session", [
         "value" => $app->session->get("value"),
@@ -44,7 +44,7 @@ $app->router->add("session/status", function () use ($app) {
 
 $app->router->add("session/dump", function () use ($app) {
     $app->view->add("take1/header", ["title" => "Session Dump"]);
-    $app->view->add("navbar1/navbar");
+    $app->view->add("navbar2/navbar");
         $app->view->add("take1/intro", ["title" => "Session", "intro" => "Implementation of session in Anax-lite. Increase and decrease the value by clicking the buttons below."]);
     $app->view->add("session/dump");
     $app->view->add("take1/footer");
