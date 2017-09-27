@@ -20,9 +20,21 @@ $app->url     = new \Anax\Url\Url();
 $app->router  = new \Anax\Route\RouterInjectable();
 $app->view    = new \Anax\View\ViewContainer();
 $app->session  = new \Vibe\Session\Session();
+$app->cookie = new \Vibe\Cookie\Cookie();
 $app->navbar = new \Vibe\Navbar\Navbar();
+$app->admin = new \Vibe\Admin\Admin();
+$app->db = new \Vibe\Database\Database(); 
 $app->diceSession = new \Vibe\Session\Session("diceGame");
 $app->diceSession->start();
+
+$databaseConfig = [
+    $dsn        = "mysql:host=blu-ray.student.bth.se;dbname=vibe16;",
+    $login      = "vibe16",
+    $password   = "HPKhKaqEBk2F",
+    $options    = [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'"],
+];
+
+$app->db->connect($databaseConfig); 
 
 $app->navbar->configure("navbar.php");
 $app->navbar->setApp($app);

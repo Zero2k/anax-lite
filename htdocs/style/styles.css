@@ -111,6 +111,32 @@ pre {
     padding-top: 10px;
 }
 
+.form-signin {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="username"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
 .footer {
     bottom: 0;
     width: 100%;
@@ -127,7 +153,7 @@ pre {
 
 .facebook {
     background: #3B5998;
-    color: rgba(255, 255, 255, 0.8);
+    color: #FFF;
     border-radius: 5px;
     width: 100px;
     height: 100px;
@@ -142,7 +168,7 @@ pre {
 
 .twitter {
     background: #55ACEE;
-    color: rgba(255, 255, 255, 0.8);
+    color: #FFF;
     border-radius: 5px;
     width: 100px;
     height: 100px;
@@ -157,7 +183,7 @@ pre {
 
 .linkedin {
     background: #0077B5;
-    color: rgba(255, 255, 255, 0.8);
+    color: #FFF;
     border-radius: 5px;
     width: 100px;
     height: 100px;
@@ -172,7 +198,7 @@ pre {
 
 .googleplus {
     background: #DC4A3D;
-    color: rgba(255, 255, 255, 0.8);
+    color: #FFF;
     border-radius: 5px;
     width: 100px;
     height: 100px;
