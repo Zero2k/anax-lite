@@ -25,6 +25,10 @@ return [
         "text" => "Dice Game",
         "route" => "dice",
     ],
+    "content" => [
+        "text" => "Content",
+        "route" => "test",
+    ],
     "profile" => [
         "text" => "Profile",
         "route" => "profile",

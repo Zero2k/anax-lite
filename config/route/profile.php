@@ -1,4 +1,5 @@
 <?php
+
 $app->router->add("login", function () use ($app) {
     // Check if user is logged in
     if ($app->session->has("username")) {
@@ -134,7 +135,7 @@ $app->router->add("admin", function () use ($app) {
         $app->view->add("take1/header", ["title" => "Administration"]);
         $app->view->add("navbar2/navbar");
         $app->view->add("take1/intro", ["title" => "Administration", "intro" => "Manage users, etc"]);
-        $app->view->add("profile/admin", [
+        $app->view->add("admin/admin", [
             "html" => $html,
             "message" => $app->session->getOnce("flash")
         ]);

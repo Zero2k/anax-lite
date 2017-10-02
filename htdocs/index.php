@@ -23,6 +23,7 @@ $app->session  = new \Vibe\Session\Session();
 $app->cookie = new \Vibe\Cookie\Cookie();
 $app->navbar = new \Vibe\Navbar\Navbar();
 $app->admin = new \Vibe\Admin\Admin();
+$app->filter = new \Mos\TextFilter\CTextFilter();
 $app->db = new \Vibe\Database\Database(); 
 $app->diceSession = new \Vibe\Session\Session("diceGame");
 $app->diceSession->start();
