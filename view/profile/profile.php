@@ -23,6 +23,9 @@
                 <div class="list-group">
                     <a href="<?= $edit ?>" class="list-group-item">Edit User</a>
                     <a href="<?= $change ?>" class="list-group-item">Change Passowrd</a>
+                    <a href="<?= $pages ?>" class="list-group-item">Pages</a>
+                    <a href="<?= $posts ?>" class="list-group-item">Posts</a>
+                    <a href="<?= $blocks ?>" class="list-group-item">Blocks</a>
                     <?php if ($user["username"] == "Admin") : ?>
                     <a href="<?= $admin ?>" class="list-group-item">Administration</a>
                     <?php endif; ?>

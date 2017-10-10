@@ -150,6 +150,56 @@ class Database
     }
 
     /**
+    * Do SELECT with optional parameters and return a resultset.
+    *
+    * @param string $sql   statement to execute
+    * @param array  $param to match ? in statement
+    *
+    * @return array with resultset
+    */
+    public function executeFetchAll($sql, $param = [])
+    {
+        $sth = $this->execute($sql, $param);
+        $res = $sth->fetchAll();
+        if ($res === false) {
+            $this->statementException($sth, $sql, $param);
+        }
+        return $res;
+    }
+
+    /**
+    * Do INSERT/UPDATE/DELETE with optional parameters.
+    *
+    * @param string $sql   statement to execute
+    * @param array  $param to match ? in statement
+    *
+    * @return PDOStatement
+    */
+    public function execute($sql, $param = [])
+    {
+        $sth = $this->db->prepare($sql);
+        if (!$sth) {
+            $this->statementException($sth, $sql, $param);
+        }
+
+        $status = $sth->execute($param);
+        if (!$status) {
+            $this->statementException($sth, $sql, $param);
+        }
+
+        return $sth;
+    }
+
+    public function dataExist($table, $field, $value)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM $table WHERE $field='$value'");
+        $stmt->execute();
+        $res = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return !$res ? false : true;
+    }
+
+    /**
     * Return number of users in database
     * @return Int $res number of user objects.
     */

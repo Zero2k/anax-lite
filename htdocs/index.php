@@ -24,6 +24,8 @@ $app->cookie = new \Vibe\Cookie\Cookie();
 $app->navbar = new \Vibe\Navbar\Navbar();
 $app->admin = new \Vibe\Admin\Admin();
 $app->filter = new \Mos\TextFilter\CTextFilter();
+$app->content = new \Vibe\Content\Content();
+$app->block = new \Vibe\Block\Block();
 $app->db = new \Vibe\Database\Database(); 
 $app->diceSession = new \Vibe\Session\Session("diceGame");
 $app->diceSession->start();
@@ -32,10 +34,10 @@ $databaseConfig = [
     $dsn        = "mysql:host=blu-ray.student.bth.se;dbname=vibe16;",
     $login      = "vibe16",
     $password   = "HPKhKaqEBk2F",
-    $options    = [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'"],
+    $options    = [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES UTF8"],
 ];
 
-$app->db->connect($databaseConfig); 
+$app->db->connect($databaseConfig);
 
 $app->navbar->configure("navbar.php");
 $app->navbar->setApp($app);

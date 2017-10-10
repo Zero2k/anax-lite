@@ -12,15 +12,7 @@
             </div>
 
             <div class="col-xs-12 col-md-3">
-                <h3>This site is powered by:</h3>
-                <ul>
-                    <li>PHP</li>
-                    <li>Bootstrap</li>
-                    <li>Make</li>
-                    <li>Composer</li>
-                    <li>Apache</li>
-                    <li>Git</li>
-                </ul>
+                <?= $sidebar ?>
                 <a class="btn btn-success" href="status" role="button">Check Status</a>
             </div>
         </div>

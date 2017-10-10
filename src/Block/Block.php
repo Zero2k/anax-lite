@@ -1,0 +1,25 @@
+<?php
+
+namespace Vibe\Block;
+
+/**
+* Block class.
+*/
+class Block
+{
+    public function displayBlock($title, $data)
+    {
+        $html = <<<EOD
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">{$title}</h4>
+            </div>
+            <div class="panel-body">
+                {$data}
+            </div>
+        </div>
+EOD;
+        
+        return $html;
+    }
+}

@@ -13,10 +13,24 @@ $app->router->add("", function () use ($app) {
 });
 
 $app->router->add("about", function () use ($app) {
+    $sql = "SELECT * FROM content WHERE path=? AND deleted=?";
+    $resultset = $app->db->executeFetchAll($sql, ['sidebar-1', 0]);
+    if (!$resultset) {
+        $title = "Add block";
+        $data = "Add block";
+    } else {
+        foreach ($resultset as $res) {
+            $title = $res->title;
+            $data = $app->filter->doFilter($res->data, $res->filter);
+        }
+    }
+
     $app->view->add("take1/header", ["title" => "About"]);
     $app->view->add("navbar2/navbar");
     $app->view->add("take1/intro", ["title" => "About", "intro" => "About this site and and its underlying technology."]);
-    $app->view->add("take1/about");
+    $app->view->add("take1/about", [
+        "sidebar" => $app->block->displayBlock($title, $data)
+    ]);
     $app->view->add("take1/footer");
     $app->response->setBody([$app->view, "render"])
               ->send();

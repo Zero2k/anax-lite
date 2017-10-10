@@ -35,6 +35,9 @@ $app->router->add("profile", function () use ($app) {
         "edit" => $app->url->create("edit"),
         "change" => $app->url->create("change"),
         "admin" => $app->url->create("admin"),
+        "pages" => $app->url->create("pages"),
+        "posts" => $app->url->create("posts"),
+        "blocks" => $app->url->create("blocks"),
         "message" => $app->session->getOnce("flash")
     ]);
     $app->view->add("take1/footer");
@@ -147,6 +150,269 @@ $app->router->add("admin", function () use ($app) {
         $app->response->redirect($app->url->create('profile'));
     }
 });
+
+/* CONTENT */
+
+$app->router->add("pages", function () use ($app) {
+    // Check if user is logged in otherwise redirect to login
+    if (!$app->session->has("username")) {
+        $app->response->redirect($app->url->create('login'));
+    }
+    $username = $app->session->get("username");
+    $createContent = $app->url->create("create-content");
+    $editContent = $app->url->create("edit-content");
+
+    $sql = "SELECT * FROM content WHERE type=?";
+    $resultset = $app->db->executeFetchAll($sql, ["page"]);
+    $html = $app->content->showContent($resultset);
+
+    $currentDate = date('Y-m-d H:i:s');
+
+    if (isset($_GET["preview"])) {
+        $id = $_GET["preview"];
+
+        $sql = "SELECT * FROM content WHERE id=?";
+        $resultset = $app->db->executeFetchAll($sql, [$id]);
+
+        foreach ($resultset as $res) {
+            $title = $res->title;
+            $filter = $res->filter;
+            $data = $app->filter->doFilter($res->data, $filter);
+            $createdAt = $res->created;
+            $type = $res->type;
+        }
+
+        $html = $app->content->previewContent($title, $data, $createdAt, $type, $filter);
+    }
+
+    if (isset($_GET["add"])) {
+        $type = "page";
+        $html = $app->content->addContent($createContent, $currentDate, $type);
+    }
+
+    if (isset($_GET["edit"])) {
+        $id = $_GET["edit"];
+        $sql = "SELECT * FROM content WHERE id=?";
+        $resultset = $app->db->executeFetchAll($sql, [$id]);
+
+        $html = $app->content->editContent($resultset, $editContent, $currentDate);
+    }
+
+    if (isset($_GET["delete"])) {
+        $id = $_GET["delete"];
+        $sql = "UPDATE content SET deleted='1' WHERE id='$id'";
+        $app->db->execute($sql);
+
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+    }
+
+    $app->view->add("take1/header", ["title" => "Add or Edit Pages"]);
+    $app->view->add("navbar2/navbar");
+    $app->view->add("take1/intro", ["title" => "Add or Edit Pages", "intro" => "Add new page."]);
+    $app->view->add("profile/pages", [
+            "html" => $html,
+            "message" => $app->session->getOnce("flash")
+        ]);
+    $app->view->add("take1/footer");
+    $app->response->setBody([$app->view, "render"])
+              ->send();
+});
+
+$app->router->add("posts", function () use ($app) {
+    // Check if user is logged in otherwise redirect to login
+    if (!$app->session->has("username")) {
+        $app->response->redirect($app->url->create('login'));
+    }
+    $username = $app->session->get("username");
+    $createContent = $app->url->create("create-content");
+    $editContent = $app->url->create("edit-content");
+
+    $sql = "SELECT * FROM content WHERE type=?";
+    $resultset = $app->db->executeFetchAll($sql, ["post"]);
+    $html = $app->content->showContent($resultset);
+
+    $currentDate = date('Y-m-d H:i:s');
+
+    if (isset($_GET["preview"])) {
+        $id = $_GET["preview"];
+
+        $sql = "SELECT * FROM content WHERE id=?";
+        $resultset = $app->db->executeFetchAll($sql, [$id]);
+
+        foreach ($resultset as $res) {
+            $title = $res->title;
+            $filter = $res->filter;
+            $data = $app->filter->doFilter($res->data, $filter);
+            $createdAt = $res->created;
+            $type = $res->type;
+        }
+
+        $html = $app->content->previewContent($title, $data, $createdAt, $type, $filter);
+    }
+
+    if (isset($_GET["add"])) {
+        $type = "post";
+        $html = $app->content->addContent($createContent, $currentDate, $type);
+    }
+
+    if (isset($_GET["edit"])) {
+        $id = $_GET["edit"];
+        $sql = "SELECT * FROM content WHERE id=?";
+        $resultset = $app->db->executeFetchAll($sql, [$id]);
+
+        $html = $app->content->editContent($resultset, $editContent, $currentDate);
+    }
+
+    if (isset($_GET["delete"])) {
+        $id = $_GET["delete"];
+        $sql = "UPDATE content SET deleted='1' WHERE id='$id'";
+        $app->db->execute($sql);
+
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+    }
+
+    $app->view->add("take1/header", ["title" => "Add or Edit Posts"]);
+    $app->view->add("navbar2/navbar");
+    $app->view->add("take1/intro", ["title" => "Add or Edit Posts", "intro" => "Add new post."]);
+    $app->view->add("profile/posts", [
+            "html" => $html,
+            "message" => $app->session->getOnce("flash")
+        ]);
+    $app->view->add("take1/footer");
+    $app->response->setBody([$app->view, "render"])
+              ->send();
+});
+
+$app->router->add("blocks", function () use ($app) {
+    // Check if user is logged in otherwise redirect to login
+    if (!$app->session->has("username")) {
+        $app->response->redirect($app->url->create('login'));
+    }
+    $username = $app->session->get("username");
+    $createContent = $app->url->create("create-content");
+    $editContent = $app->url->create("edit-content");
+
+    $sql = "SELECT * FROM content WHERE type=?";
+    $resultset = $app->db->executeFetchAll($sql, ["block"]);
+    $html = $app->content->showContent($resultset);
+
+    $currentDate = date('Y-m-d H:i:s');
+
+    if (isset($_GET["preview"])) {
+        $id = $_GET["preview"];
+
+        $sql = "SELECT * FROM content WHERE id=?";
+        $resultset = $app->db->executeFetchAll($sql, [$id]);
+
+        foreach ($resultset as $res) {
+            $title = $res->title;
+            $filter = $res->filter;
+            $data = $app->filter->doFilter($res->data, $filter);
+            $createdAt = $res->created;
+            $type = $res->type;
+        }
+
+        $html = $app->content->previewContent($title, $data, $createdAt, $type, $filter);
+    }
+
+    if (isset($_GET["add"])) {
+        $type = "block";
+        $html = $app->content->addContent($createContent, $currentDate, $type);
+    }
+
+    if (isset($_GET["edit"])) {
+        $id = $_GET["edit"];
+        $sql = "SELECT * FROM content WHERE id=?";
+        $resultset = $app->db->executeFetchAll($sql, [$id]);
+
+        $html = $app->content->editContent($resultset, $editContent, $currentDate);
+    }
+
+    if (isset($_GET["delete"])) {
+        $id = $_GET["delete"];
+        $sql = "UPDATE content SET deleted='1' WHERE id='$id'";
+        $app->db->execute($sql);
+
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+    }
+
+    $app->view->add("take1/header", ["title" => "Add or Edit Blocks"]);
+    $app->view->add("navbar2/navbar");
+    $app->view->add("take1/intro", ["title" => "Add or Edit Blocks", "intro" => "Add new block."]);
+    $app->view->add("profile/blocks", [
+            "html" => $html, 
+            "message" => $app->session->getOnce("flash")
+        ]);
+    $app->view->add("take1/footer");
+    $app->response->setBody([$app->view, "render"])
+              ->send();
+});
+
+/* CONTENT */
+
+$app->router->add("create-content", function () use ($app) {
+    $title = isset($_POST["title"]) ? htmlentities($_POST["title"]) : null;
+    $path = isset($_POST["path"]) ? htmlentities($_POST["path"]) : null;
+    $slug = $app->content->slugify($title);
+    $data = isset($_POST["data"]) ? htmlentities($_POST["data"]) : null;
+    $published = isset($_POST["published"]) ? htmlentities($_POST["published"]) : null;
+    $type = isset($_POST["type"]) ? htmlentities($_POST["type"]) : null;
+    $filter = isset($_POST["filter"]) ? implode(',', $_POST["filter"]) : null;
+
+    if (!$path) {
+        $path = null;
+    }
+
+    if (!$data) {
+        $app->session->set("flash", "Error, you need to enter some text!");
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+    } else {
+        $sql = "INSERT INTO content (title, path, slug, data, published, type, filter) VALUES (?, ?, ?, ?, ?, ?, ?)";  
+        $params = [$title, $path, $slug, $data, $published, $type, $filter];
+
+        try {
+            $app->db->execute($sql, $params);
+        } catch (PDOException $e) {
+            // 1062
+            if ($e->errorInfo[0] == '23000' && $e->errorInfo[1] == '1062') {
+                $app->session->set("flash", "Error - Title must be unique.");
+            }
+        }
+
+        $app->response->redirect($app->url->create('profile'));
+    }
+});
+
+$app->router->add("edit-content", function () use ($app) {
+    $id = isset($_POST["id"]) ? htmlentities($_POST["id"]) : null;
+    $title = isset($_POST["title"]) ? htmlentities($_POST["title"]) : null;
+    $slug = $app->content->slugify($title);
+    $path = isset($_POST["path"]) ? htmlentities($_POST["path"]) : null;
+    $data = isset($_POST["data"]) ? htmlentities($_POST["data"]) : null;
+    $published = isset($_POST["published"]) ? htmlentities($_POST["published"]) : null;
+    $updated = isset($_POST["updated"]) ? htmlentities($_POST["updated"]) : null;
+    $filter = isset($_POST["filter"]) ? htmlentities($_POST["filter"]) : null;
+    $deleted = isset($_POST["deleted"]) ? htmlentities($_POST["deleted"]) : null;
+
+    if (!$path) {
+        $path = null;
+    }
+
+    $sql = "UPDATE content SET title=?, slug=?, path=?, data=?, published=?, updated=NOW(), filter=?, deleted=? WHERE id=?";
+    $params = [$title, $slug, $path, $data, $published, $filter, $deleted, $id];
+
+    try {
+        $app->db->execute($sql, $params);
+    } catch (PDOException $e) {
+        if ($e->errorInfo[0] == '23000' && $e->errorInfo[1] == '1062') {
+            $app->session->set("flash", "Error - Title and Path can't be same as other pages.");
+        }
+    }
+
+    $app->response->redirect($app->url->create('profile'));
+});
+
+/* USER & PROFILE */
 
 $app->router->add("create-user", function () use ($app) {
     $username = isset($_POST["username"]) ? htmlentities($_POST["username"]) : null;
