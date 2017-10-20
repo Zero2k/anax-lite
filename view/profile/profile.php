@@ -28,6 +28,7 @@
                     <a href="<?= $blocks ?>" class="list-group-item">Blocks</a>
                     <?php if ($user["username"] == "Admin") : ?>
                     <a href="<?= $admin ?>" class="list-group-item">Administration</a>
+                    <a href="<?= $webshop ?>" class="list-group-item">Webshop</a>
                     <?php endif; ?>
                     <a href="<?= $logout ?>" class="list-group-item">Logout</a>
                 </div>

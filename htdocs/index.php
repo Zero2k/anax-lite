@@ -23,6 +23,7 @@ $app->session  = new \Vibe\Session\Session();
 $app->cookie = new \Vibe\Cookie\Cookie();
 $app->navbar = new \Vibe\Navbar\Navbar();
 $app->admin = new \Vibe\Admin\Admin();
+$app->webshop = new \Vibe\Webshop\Webshop();
 $app->filter = new \Mos\TextFilter\CTextFilter();
 $app->content = new \Vibe\Content\Content();
 $app->block = new \Vibe\Block\Block();

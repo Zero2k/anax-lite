@@ -35,6 +35,7 @@ $app->router->add("profile", function () use ($app) {
         "edit" => $app->url->create("edit"),
         "change" => $app->url->create("change"),
         "admin" => $app->url->create("admin"),
+        "webshop" => $app->url->create("webshop"),
         "pages" => $app->url->create("pages"),
         "posts" => $app->url->create("posts"),
         "blocks" => $app->url->create("blocks"),

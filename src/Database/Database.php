@@ -190,13 +190,19 @@ class Database
         return $sth;
     }
 
-    public function dataExist($table, $field, $value)
+    /**
+    * Fetch all from database
+    *
+    * @param string $sql String. SQL statement to execute
+    * @return object $res Object. The result object from the database
+    *
+    */
+    public function fetchAll($sql)
     {
-        $stmt = $this->db->prepare("SELECT * FROM $table WHERE $field='$value'");
+        $stmt = $this->db->prepare($sql);
         $stmt->execute();
-        $res = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        return !$res ? false : true;
+        $res = $stmt->fetchAll();
+        return $res;
     }
 
     /**
