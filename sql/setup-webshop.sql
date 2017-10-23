@@ -163,7 +163,6 @@ CREATE TABLE kmom05_order (
     `customer_id` INT,
     `total` INT,
     `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    `delivery` DATETIME DEFAULT NULL,
 
     FOREIGN KEY (`customer_id`) REFERENCES `kmom05_customer` (`id`)
 
@@ -195,7 +194,7 @@ DROP TABLE IF EXISTS kmom05_inventoryLog;
 CREATE TABLE kmom05_inventoryLog (
 	`id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `when` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `what` VARCHAR(20),
+    `what` VARCHAR(40),
     `productId` INT,
     `amount` DECIMAL(4, 2)
 );
@@ -257,6 +256,27 @@ FROM
 ;
 
 SELECT * FROM ViewProduct;
+
+-- ------------------------------------------------------------------------
+--
+-- Cart VIEW
+--
+DROP VIEW IF EXISTS ViewCart;
+CREATE VIEW ViewCart
+AS
+SELECT
+	Customer.id AS CustomerId,
+    Customer.username AS CustomerName,
+    Cart.product_id as ProductId,
+    SUM(Cart.amount) AS Amount,
+    Product.price AS Price
+FROM
+	`kmom05_customer` AS Customer
+    INNER JOIN `kmom05_cart` AS Cart
+		ON Customer.id = Cart.customer_id
+	INNER JOIN `kmom05_product` AS Product
+		ON Cart.product_id = Product.id
+	GROUP BY Cart.id;
 
 -- PROCEDURE
 
@@ -333,6 +353,233 @@ END
 
 DELIMITER ;
 
+-- ------------------------------------------------------------------------
+--
+-- View Products in Order
+--
+DROP PROCEDURE IF EXISTS viewOrder;
+
+DELIMITER //
+
+CREATE PROCEDURE viewOrder(
+    orderId INT
+)
+BEGIN
+
+SELECT
+	Orders.id AS orderNr,
+	Product.id AS productId,
+    Product.title AS title,
+    Product.price AS price,
+    OrderRow.amount AS amount,
+    Customer.username AS customerName
+FROM
+
+	`kmom05_order` AS Orders
+		LEFT JOIN `kmom05_orderRow` AS OrderRow
+			ON Orders.id = OrderRow.order_id
+		LEFT JOIN `kmom05_product` AS Product
+			ON OrderRow.product_id = Product.id
+		INNER JOIN `kmom05_customer` AS Customer
+			ON Orders.customer_id = Customer.id
+		WHERE Orders.id = orderId;
+
+END;
+//
+
+DELIMITER ;
+
+-- ------------------------------------------------------------------------
+--
+-- View Single Customers Cart
+--
+DROP PROCEDURE IF EXISTS viewCustomerCart;
+
+DELIMITER //
+
+CREATE PROCEDURE viewCustomerCart(
+	customerId INT
+)
+BEGIN 
+
+SELECT
+	Customer.id AS CustomerId,
+    Customer.username AS CustomerName,
+    Cart.product_id as ProductId,
+    SUM(Cart.amount) AS Amount,
+    Product.price AS Price
+FROM
+	`kmom05_customer` AS Customer
+    INNER JOIN `kmom05_cart` AS Cart
+		ON Customer.id = Cart.customer_id
+	INNER JOIN `kmom05_product` AS Product
+		ON Cart.product_id = Product.id
+    WHERE Customer.id = customerId GROUP BY Cart.id;
+    
+END;
+//
+
+DELIMITER ;
+
+-- ------------------------------------------------------------------------
+--
+-- Add product to cart
+--
+DROP PROCEDURE IF EXISTS addToCart;
+
+DELIMITER //
+
+CREATE PROCEDURE addToCart(
+	customerId INT,
+    productId INT,
+    amount INT
+)
+BEGIN
+	DECLARE availableInventory INT;
+    
+    START TRANSACTION;
+    
+    SET availableInventory = (SELECT amount FROM kmom05_inventory WHERE product_id = productId);
+    
+    IF availableInventory - amount < 0 THEN
+		ROLLBACK;
+		SELECT "Not enought inventory";
+	ELSE
+		INSERT INTO kmom05_cart(`customer_id`, `product_id`, `amount`) VALUES (customerId, productId, amount);
+        
+        COMMIT;
+    END IF;
+END;
+//
+
+DELIMITER ;
+
+-- ------------------------------------------------------------------------
+--
+-- Empty cart
+--
+DROP PROCEDURE IF EXISTS removeFromCart;
+
+DELIMITER //
+
+CREATE PROCEDURE removeFromCart(
+	customerId INT,
+    productId INT,
+    amountToRemove INT
+)
+BEGIN
+
+	DECLARE productsInCart INT;
+    
+    START TRANSACTION;
+    
+    SET productsInCart = (SELECT amount FROM kmom05_cart WHERE product_id = productId);
+    
+    IF productsInCart - amountToRemove < 0 THEN
+		ROLLBACK;
+		SELECT "You do not have that many products in your cart.";
+		ELSE
+		IF productsInCart - amountToRemove = 0 THEN
+            DELETE FROM kmom05_cart WHERE product_id = productId;
+		ELSE
+			UPDATE kmom05_cart
+            SET amount = amount - amountToRemove
+            WHERE product_id = productId;
+        
+        COMMIT;
+        END IF;
+    END IF;
+
+END;
+//
+
+DELIMITER ;
+
+-- ------------------------------------------------------------------------
+--
+-- Create order
+--
+DROP PROCEDURE IF EXISTS createOrder;
+
+DELIMITER //
+
+CREATE PROCEDURE createOrder(
+	customerId INT
+)
+BEGIN
+
+	DECLARE amountInInventory INT;
+    
+    START TRANSACTION;
+    
+    UPDATE kmom05_inventory
+    INNER JOIN ViewCart
+		ON kmom05_inventory.product_id = ViewCart.productId
+	SET kmom05_inventory.amount = kmom05_inventory.amount - ViewCart.Amount
+    WHERE ViewCart.CustomerId = customerId;
+    
+    INSERT INTO kmom05_order(`customer_id`)
+		SELECT 
+			Customer.id AS customerId
+		FROM kmom05_customer as Customer
+			INNER JOIN kmom05_cart as Cart
+				ON Customer.id = Cart.customer_id;
+                
+	INSERT INTO kmom05_orderRow(`order_id`, `product_id`, `amount`)
+		SELECT
+			Orders.id AS orderNr,
+            Cart.product_id AS productId,
+            Cart.amount AS Amount
+		FROM kmom05_order AS Orders
+			INNER JOIN kmom05_cart AS Cart
+				ON Orders.customer_id = Cart.customer_id;
+			
+	SET amountInInventory = (SELECT MIN(amount) FROM kmom05_inventory);
+    
+    IF amountInInventory < 0 THEN
+		ROLLBACK;
+        SELECT "Not enought inventory";
+	ELSE
+		DELETE FROM kmom05_cart WHERE customer_id = customerId;
+        COMMIT;
+	
+    END IF;
+
+END;
+//
+
+DELIMITER ;
+
+-- ------------------------------------------------------------------------
+--
+-- Delete order
+--
+DROP PROCEDURE IF EXISTS deleteOrder;
+
+DELIMITER //
+
+CREATE PROCEDURE deleteOrder(
+	customerId INT
+)
+BEGIN
+
+	UPDATE kmom05_inventory
+    INNER JOIN kmom05_orderRow
+		ON kmom05_inventory.product_id = kmom05_orderRow.product_id
+	INNER JOIN kmom05_order
+		ON kmom05_order.id = kmom05_orderRow.order_id
+	SET kmom05_inventory.amount = kmom05_inventory.amount + kmom05_orderRow.amount
+    WHERE kmom05_order.id = customerId;
+    
+        
+    DELETE FROM kmom05_orderRow WHERE order_id = customerId;
+    DELETE FROM kmom05_order WHERE id = customerId;
+
+END;
+//
+
+DELIMITER ;
+
 -- TRIGGER
 
 -- ------------------------------------------------------------------------
@@ -342,13 +589,18 @@ DELIMITER ;
 DROP TRIGGER IF EXISTS inventoryUpdate;
 
 DELIMITER //
+
 CREATE TRIGGER inventoryUpdate AFTER UPDATE ON kmom05_inventory
 FOR EACH ROW
 BEGIN
-    IF NEW.amount > OLD.amount THEN
-        INSERT INTO kmom05_inventoryLog (`what`, `productId`, `amount`) VALUES ("Added Invetory", NEW.product_id, NEW.amount - OLD.amount);
-    ELSEIF NEW.amount < OLD.amount THEN
-        INSERT INTO kmom05_inventoryLog (`what`, `productId`, `amount`) VALUES ("Removed Invetory", NEW.product_id, NEW.amount - OLD.amount);
+    IF NEW.amount < 5 THEN
+        INSERT INTO kmom05_inventoryLog(`what`, `productId`, `amount`) VALUES ("IMPORTANT - LOW STOCK", NEW.product_id, NEW.amount);
+    ELSEIF  NEW.amount > OLD.amount THEN
+        INSERT INTO kmom05_inventoryLog(`what`, `productId`, `amount`) VALUES ("Added Invetory", NEW.product_id, NEW.amount - OLD.amount);
+    ELSE
+        INSERT INTO kmom05_inventoryLog(`what`, `productId`, `amount`) VALUES ("Removed Invetory", NEW.product_id, NEW.amount - OLD.amount);
     END IF;
-END;//
+END;
+//
+
 DELIMITER ;
