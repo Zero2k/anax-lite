@@ -36,6 +36,10 @@ CREATE TABLE kmom05_product (
     `title` VARCHAR(100),
     `description` VARCHAR(1000),
     `price` DOUBLE(6, 2)
+
+    -- ADDED FULLTEXT INDEX TO TITLE & DESCRIPTION IN KMOM06
+    -- FULLTEXT KEY `title` (`title`),
+    -- FULLTEXT KEY `description` (`description`)
 ) ENGINE = INNODB CHARACTER SET utf8;
 
 INSERT INTO kmom05_product(`image`, `title`, `description`, `price`) VALUES

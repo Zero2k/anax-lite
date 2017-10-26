@@ -12,6 +12,9 @@ CREATE TABLE users
     password VARCHAR(100) NOT NULL,
     firstname VARCHAR(100) DEFAULT NULL,
     lastname VARCHAR(100) DEFAULT NULL
+
+    -- ADDED UNIQUE KEY TO EMAIL IN KMOM06
+    -- UNIQUE KEY `email_unique` (`email`)
 ) ENGINE INNODB CHARACTER SET utf8;
 
 DELETE FROM users;
